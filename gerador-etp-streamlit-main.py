@@ -21,10 +21,13 @@ def buscar_contratos_pncp(termo: str):
     data_inicial_str = "2020-01-03"
     data_final_str = datetime.now().strftime('%Y-%m-%d')
 
+    # Adiciona os termos específicos para ETP e TR na busca para filtrar os resultados
+    termo_filtrado = f'{termo} "Estudo Técnico Preliminar" "Termo de Referência"'
+
     # URL da API com os parâmetros de busca, incluindo data inicial e final.
     api_url = (
         f"https://pncp.gov.br/api/consulta/v1/contratacoes"
-        f"?termo={requests.utils.quote(termo)}"
+        f"?termo={requests.utils.quote(termo_filtrado)}"
         f"&dataInicial={data_inicial_str}"
         f"&dataFinal={data_final_str}"
         f"&pagina=1&tamanhoPagina=50" # Buscamos até 50 resultados
