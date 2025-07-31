@@ -17,17 +17,16 @@ def buscar_contratos_pncp(termo: str):
     Função para buscar contratos na API do PNCP.
     Ela constrói a URL, faz a requisição e retorna os dados em formato JSON.
     """
-    # Calcula a data de 3 anos atrás para filtrar os resultados.
-    data_limite = datetime.now() - timedelta(days=3*365)
-    data_inicial_str = data_limite.strftime('%Y-%m-%d')
+    # Define as datas inicial e final para a busca.
+    data_inicial_str = "2020-01-03"
+    data_final_str = datetime.now().strftime('%Y-%m-%d')
 
-    # Monta a URL da API com os parâmetros de busca.
-    # Usamos f-string para inserir as variáveis diretamente na URL.
-    # O termo de busca é codificado para ser seguro para URLs.
+    # URL da API com os parâmetros de busca, incluindo data inicial e final.
     api_url = (
-        f"https://pncp.gov.br/api/pncp/v1/contratacoes"
+        f"https://pncp.gov.br/api/consulta/v1/contratacoes"
         f"?termo={requests.utils.quote(termo)}"
         f"&dataInicial={data_inicial_str}"
+        f"&dataFinal={data_final_str}"
         f"&pagina=1&tamanhoPagina=50" # Buscamos até 50 resultados
     )
 
@@ -85,7 +84,7 @@ if submit_button and termo_busca:
                 valor_formatado = f"R$ {resultado['valorTotalEstimado']:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
 
             # Usa um "expander" para mostrar os detalhes de cada contrato de forma organizada.
-            with st.expander(f"**{resultado['orgaoSubRogado']['nome']}** - {data_publicacao}"):
+            with st.expander(f"**{resultado['orgaoNome']}** - {data_publicacao}"):
                 st.markdown(f"**Objeto:** {resultado['objetoContratacao']}")
                 st.markdown(f"**Modalidade:** {resultado.get('modalidadeNome', 'Não especificada')}")
                 st.markdown(f"**Município/UF:** {resultado['municipioNome']}/{resultado['ufSigla']}")
@@ -98,4 +97,3 @@ if submit_button and termo_busca:
     # Se a busca não retornou resultados.
     elif resultados is not None:
         st.warning("Nenhum resultado encontrado para o termo pesquisado. Tente usar outras palavras-chave.")
-
