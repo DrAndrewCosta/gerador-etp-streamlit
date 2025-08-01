@@ -1,6 +1,6 @@
 import streamlit as st
 import requests
-from datetime import datetime
+from datetime import datetime, timedelta
 
 # --- Configurações da Página ---
 st.set_page_config(
@@ -26,8 +26,11 @@ def buscar_contratos_pncp(termo: str, codigos_modalidades: list[int]):
     Função para buscar contratos na API do PNCP, agora com filtro de modalidade.
     """
     # Define as datas inicial e final para a busca.
-    data_inicial_str = "2020-01-03"
-    data_final_str = datetime.now().strftime('%Y-%m-%d')
+    # A data final é o dia atual, e a data inicial é 60 dias antes.
+    data_final = datetime.now()
+    data_inicial = data_final - timedelta(days=60)
+    data_inicial_str = data_inicial.strftime('%Y-%m-%d')
+    data_final_str = data_final.strftime('%Y-%m-%d')
 
     # Adiciona os termos específicos para ETP e TR na busca para filtrar os resultados.
     termo_filtrado = f'{termo} "Estudo Técnico Preliminar" "Termo de Referência"'
